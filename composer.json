@@ -1,0 +1,11 @@
+{
+    "require": {        
+        "intervention/image": "^2.7",
+        "nesbot/carbon": "^2.66",
+        "symfony/symfony": "^2.0"
+    },
+
+    "autoload": {
+        "classmap": ["src", "sourceWeb"]
+    }
+}
