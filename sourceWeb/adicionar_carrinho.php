@@ -3,16 +3,22 @@
 session_start();
 
 require '../vendor/autoload.php';
-
 require '../autoloadclass.php';
 
+// Verifica se o parâmetro 'id' foi passado via GET
+if (isset($_GET['id'])) {
+    $productId = intval($_GET['id']); // Certifica-se de que é um número inteiro válido
 
-if (isset($_SESSION['carrinho'][$_GET['id']])) {
-    $_SESSION['carrinho'][$_GET['id']]++;
-} else {
-    $_SESSION['carrinho'][$_GET['id']] = 1;
+    if (is_numeric($productId) && $productId > 0) {
+        if (isset($_SESSION['carrinho'][$productId])) {
+            $_SESSION['carrinho'][$productId]++;
+        } else {
+            $_SESSION['carrinho'][$productId] = 1;
+        }
+    }
 }
 
 header('Location: pratos.php');
+
 
 ?>

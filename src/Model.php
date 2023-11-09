@@ -11,7 +11,7 @@ abstract class Model
     public function __construct(string $tableName, string $primaryKey, array $excludedProperties = [])
     {
         $this->connection = MyConnect::getInstance();
-
+        $this->db = MyConnect::getInstance();
         $this->tableName = $tableName;
         $this->primaryKey = $primaryKey;
         $this->excludedProperties = $excludedProperties;

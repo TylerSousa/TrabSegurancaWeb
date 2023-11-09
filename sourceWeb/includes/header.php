@@ -4,22 +4,11 @@ session_start();
 $pages = array();
 $pages["/ecome/sourceWeb/index.php"] = "Início";
 
-if(isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'VENDEDOR'){
-  $pages["/ecome/sourceWeb/gestaoementa.php"] = "Gerir Ementa";
-} else {
-  $pages["/ecome/sourceWeb/atividades.php"] = "Atividades";
-}
+$pages["/ecome/sourceWeb/criar_atividade.php"] = "Criar Atividade";
 
-if(isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'ADMINISTRADOR') {
-  $pages["/ecome/sourceWeb/utilizadores.php"] = "Utilizadores";
-}
+  $pages["/ecome/sourceWeb/atividades.php"] = "Atividades";
 
 $pages["/ecome/sourceWeb/vendedores.php"] = "Vendedores";
-
-if(isset($_SESSION['carrinho']) && $_SESSION['perfil'] === 'CLIENTE') {
-  $pages["/ecome/sourceWeb/carrinho.php"] = "Carrinho";
-}
-
 
 $url = $_SERVER['REQUEST_URI'];
 
