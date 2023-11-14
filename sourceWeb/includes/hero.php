@@ -7,8 +7,6 @@
         <h1 class="display-5 fw-bold text-body-emphasis lh-1 mb-3">Bem-vindo ao ecome!</h1>
         <p class="lead">A sua cozinha conveniente a um clique!</p>
         <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-      <!--     <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">Primary</button>
-          <button type="button" class="btn btn-outline-secondary btn-lg px-4">Default</button> -->
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ if (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'ADMINISTRADOR') {
 
 $resultados = [];
 
+
 if ($isAdmin) {
     $resultados = Atividade::search();
 } else {
@@ -25,7 +26,7 @@ if (isset($_GET['pesquisa'])) {
 }
 ?>
 
-<div container>
+<div class="container mt-5">
     <?php if ($isAdmin) { ?>
         <div class="row">
             <div class="col mb-2">
@@ -47,17 +48,18 @@ if (isset($_GET['pesquisa'])) {
                     <button class="btn btn-outline-secondary" type="submit">Pesquisar</button>
                 </div>
             </form>
-            
-            <table class="table table-hover">
+
+            <table class="table table-striped table-responsive-md">
     <thead>
         <tr>
-            <th>Nome</th>
-            <th>Descrição</th>
-            <th>Preço</th>
-            <th>Data</th>
-            <th>Localização</th>
+            <th scope="col">Nome</th>
+            <th scope="col">Descrição</th>
+            <th scope="col">Preço</th>
+            <th scope="col">Data</th>
+            <th scope="col">Localização</th>
             <th></th>
-            <th></th> <!-- Coluna adicional para o botão "Eliminar" -->
+            <th></th>
+            <th></th> <!-- Nova coluna para o botão "Info" -->
         </tr>
     </thead>
     <tbody>
@@ -65,7 +67,7 @@ if (isset($_GET['pesquisa'])) {
             <tr>
                 <td><?php echo $resultado->getNome(); ?></td>
                 <td><?php echo $resultado->getDescricao(); ?></td>
-                <td><?php echo $resultado->getPreco(); ?></td>
+                <td><?php echo $resultado->getPreco(); ?>€</td>
                 <td><?php echo $resultado->getData(); ?></td>
                 <td><?php echo $resultado->getLocalizacao(); ?></td>
                 <td class="text-end">
@@ -76,6 +78,11 @@ if (isset($_GET['pesquisa'])) {
                 <td class="text-end">
                     <a href="eliminar_atividade.php?id=<?php echo $resultado->getId() ?>" class="btn btn-danger btn-sm">
                         <i class="fas fa-trash fa-fw"></i> Eliminar
+                    </a>
+                </td>
+                <td class="text-end">
+                    <a href="detalhes_atividades.php?id=<?php echo $resultado->getId() ?>" class="btn btn-info btn-sm">
+                        <i class="fas fa-info-circle fa-fw"></i> 
                     </a>
                 </td>
             </tr>

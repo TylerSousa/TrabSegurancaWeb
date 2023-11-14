@@ -10,6 +10,8 @@ $pages["/ecome/sourceWeb/criar_atividade.php"] = "Criar Atividade";
 
 $pages["/ecome/sourceWeb/vendedores.php"] = "Vendedores";
 
+$pages["/ecome/sourceWeb/minhas_reservas.php"] = "Reservas";
+
 $url = $_SERVER['REQUEST_URI'];
 
 $url_sections = explode('/', $_SERVER['REQUEST_URI']);
@@ -32,9 +34,6 @@ $activePage = $url;
         </li>
       <?php } ?>
         </ul>
-        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
-        </form>
         <?php if(isset($_SESSION['active']) && $_SESSION['active'] === true) { ?>
         <div class="dropdown text-end">
           <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

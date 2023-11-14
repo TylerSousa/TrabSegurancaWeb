@@ -161,4 +161,37 @@ class Atividade extends Model
 
         return false; // Retorne false se não houver ID válido para a atividade
     }
+
+    public static function search(array $filters = []): array
+    {
+        $classname = get_called_class();
+        $object = new $classname();
+
+        $sql = "SELECT * FROM " . $object->tableName;
+        if (count($filters) > 0) {
+            $sql .= " WHERE 1 = 1";
+
+            foreach ($filters as $filter) {
+                $sql .= " AND " . $filter['coluna']
+                    . " " . $filter['operador']
+                    . " '" . $filter['valor'] . "'";
+            }
+        }
+
+        $sqlResult = $object->connection->query($sql);
+
+        $resultados = [];
+        while ($row = $sqlResult->fetch_assoc()) {
+            $instance = new $classname();
+
+            // Atualize as propriedades diretamente
+            foreach ($row as $key => $value) {
+                $instance->$key = $value;
+            }
+
+            $resultados[] = $instance;
+        }
+
+        return $resultados;
+    }
 }

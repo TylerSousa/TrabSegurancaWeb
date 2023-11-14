@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $nomeTitular = $_POST['nome_titular'];
 
         // Crie um objeto Reserva com os dados
-        $reserva = new Reserva($cliente_id, $atividade_id, 'Confirmada', "Detalhes de pagamento aqui");
+        $reserva = new Reserva($cliente_id, $atividade_id, 'Confirmada', $numeroCartao);
 
         // Salve a reserva no banco de dados
         $reserva->save();
