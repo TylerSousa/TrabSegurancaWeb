@@ -1,5 +1,4 @@
 <?php
-
 class Atividade extends Model
 {
     protected ?int $id;
@@ -8,9 +7,11 @@ class Atividade extends Model
     protected ?float $preco;
     protected ?string $data;
     protected ?string $localizacao;
+    protected ?int $vendedor_id;
+    protected ?string $estado = null;
     
-        public function __construct(string $nome = '', string $descricao = '', float $preco = 0.0, string $data = '', string $localizacao = '')
-        {
+    public function __construct(string $nome = '', string $descricao = '', float $preco = 0.0, string $data = '', string $localizacao = '')
+    {
             parent::__construct('atividades', 'id');
     
             $this->nome = $nome;
@@ -19,10 +20,48 @@ class Atividade extends Model
             $this->data = $data;
             $this->localizacao = $localizacao;
             $this->id = null;
+            $this->vendedor_id = null;
         }
 
-    // Outros métodos e propriedades necessários
+      /**
+     * Set the value of estado
+     *
+     * @param string $estado
+     * @return self
+     */
+    public function setEstado($estado)
+    {
+        $this->estado = $estado;
+        return $this;
+    }
 
+    /**
+     * Get the value of estado
+     *
+     * @return string|null
+     */
+    public function getEstado()
+    {
+        return $this->estado;
+    }
+    /**
+     * Get the value of vendedor_id
+     */ 
+    public function getVendedorId()
+    {
+        return $this->vendedor_id;
+    }
+
+    /**
+     * Set the value of vendedor_id
+     *
+     * @return  self
+     */ 
+    public function setVendedorId($vendedor_id)
+    {
+        $this->vendedor_id = $vendedor_id;
+        return $this;
+    }
     /**
      * Get the value of id
      */ 
@@ -162,36 +201,119 @@ class Atividade extends Model
         return false; // Retorne false se não houver ID válido para a atividade
     }
 
+    
     public static function search(array $filters = []): array
-    {
-        $classname = get_called_class();
-        $object = new $classname();
+{
+    $classname = get_called_class();
+    $object = new $classname();
 
-        $sql = "SELECT * FROM " . $object->tableName;
-        if (count($filters) > 0) {
-            $sql .= " WHERE 1 = 1";
+    $sql = "SELECT * FROM " . $object->tableName;
 
-            foreach ($filters as $filter) {
-                $sql .= " AND " . $filter['coluna']
-                    . " " . $filter['operador']
-                    . " '" . $filter['valor'] . "'";
-            }
+    if (!empty($filters)) {
+        $sql .= " WHERE 1 = 1";
+
+        foreach ($filters as $key => $value) {
+            // Certifique-se de escapar os valores para evitar injeção de SQL
+            $value = $object->connection->real_escape_string($value);
+
+            $sql .= " AND $key = '$value'";
         }
-
-        $sqlResult = $object->connection->query($sql);
-
-        $resultados = [];
-        while ($row = $sqlResult->fetch_assoc()) {
-            $instance = new $classname();
-
-            // Atualize as propriedades diretamente
-            foreach ($row as $key => $value) {
-                $instance->$key = $value;
-            }
-
-            $resultados[] = $instance;
-        }
-
-        return $resultados;
     }
+
+    $sqlResult = $object->connection->query($sql);
+
+    $resultados = [];
+    while ($row = $sqlResult->fetch_assoc()) {
+        $atividade = $classname::find($row[$object->primaryKey]);
+
+        if ($atividade) {
+            $resultados[] = $atividade;
+        } else {
+            // Lógica para lidar com atividades não encontradas, se necessário
+        }
+    }
+
+    return $resultados;
+}
+
+    
+
+public function update()
+{
+    if ($this->id) {
+        // Verifique se a atividade tem um ID antes de tentar atualizá-la
+        $sql = "UPDATE {$this->tableName} SET
+                    nome = ?,
+                    descricao = ?,
+                    preco = ?,
+                    data = ?,
+                    localizacao = ?
+                WHERE id = ?";
+        $params = [
+            $this->nome,
+            $this->descricao,
+            $this->preco,
+            $this->data,
+            $this->localizacao,
+            $this->id
+        ];
+        $stmt = $this->db->prepare($sql);
+
+        // "ssdssi" representa os tipos dos parâmetros: string, string, double, string, string, int
+        $stmt->bind_param("ssdssi", ...$params);
+        $stmt->execute();
+
+        return true; // Retorne true para indicar sucesso na atualização
+    }
+
+    return false; // Retorne false se não houver ID válido para a atividade
+}
+
+public static function find($id)
+{
+    $classname = get_called_class();
+    $object = new $classname();
+
+    $sql = "SELECT * FROM " . $object->tableName . " WHERE id = ?";
+    $stmt = $object->db->prepare($sql);
+    $stmt->bind_param('i', $id); // 'i' representa um inteiro
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $instance = new $classname();
+
+        // Atualize as propriedades diretamente
+        foreach ($row as $key => $value) {
+            $instance->$key = $value;
+        }
+
+        return $instance;
+    }
+
+    return null;
+}
+
+public static function getAtividadeByIdAndVendedor($atividade_id, $vendedor_id)
+{
+    $object = new self();
+    $sql = "SELECT * FROM {$object->tableName} WHERE id = ? AND vendedor_id = ?";
+    $stmt = $object->db->prepare($sql);
+    $stmt->bind_param('ii', $atividade_id, $vendedor_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($row = $result->fetch_assoc()) {
+        $instance = new self();
+
+        // Atualize as propriedades diretamente
+        foreach ($row as $key => $value) {
+            $instance->$key = $value;
+        }
+
+        return $instance;
+    }
+
+    return null;
+}
 }

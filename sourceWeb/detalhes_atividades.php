@@ -31,12 +31,19 @@ if ($atividade) {
             <h1>Detalhes da Atividade</h1>
 
             <h2>Informações da Atividade</h2>
-        <p><strong>Nome:</strong> <?php echo $atividade->getNome(); ?></p>
-        <p><strong>Descrição:</strong> <?php echo $atividade->getDescricao(); ?></p>
-        <p><strong>Preço:</strong> <?php echo $atividade->getPreco(); ?>€</p>
-        <p><strong>Data:</strong> <?php echo $atividade->getData(); ?></p>
-        <p><strong>Localização:</strong> <?php echo $atividade->getLocalizacao(); ?></p>
+            <p><strong>Nome:</strong> <?php echo $atividade->getNome(); ?></p>
+            <p><strong>Descrição:</strong> <?php echo $atividade->getDescricao(); ?></p>
+            <p><strong>Preço:</strong> <?php echo $atividade->getPreco(); ?>€</p>
+            <p><strong>Data:</strong> <?php echo $atividade->getData(); ?></p>
+            <p><strong>Localização:</strong> <?php echo $atividade->getLocalizacao(); ?></p>
             <!-- Adicione mais informações conforme necessário -->
+
+            <?php
+            // Verifique se o utilizador é um vendedor antes de exibir o botão "Atualizar"
+            if (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'VENDEDOR') {
+            ?>
+                <a href="atualizar_atividade.php?id=<?php echo $atividade->getId(); ?>" class="btn btn-primary">Atualizar Atividade</a>
+            <?php } ?>
         <?php } else { ?>
             <p>Detalhes da atividade não disponíveis.</p>
         <?php } ?>

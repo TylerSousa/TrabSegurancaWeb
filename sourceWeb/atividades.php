@@ -2,20 +2,13 @@
 include 'includes/top.php';
 require_once '../autoloadclass.php';
 
-if (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'ADMINISTRADOR') {
-    $isAdmin = true;
-} else {
-    $isAdmin = false;
+// Verifique se o utilizador é um vendedor
+if (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'VENDEDOR') {
+    header('Location: index.php'); // Redirecione para uma página de erro para os vendedores
+    exit;
 }
 
-$resultados = [];
-
-
-if ($isAdmin) {
-    $resultados = Atividade::search();
-} else {
-    $resultados = Atividade::search();
-}
+$resultados = Atividade::search();
 
 // Verifique se o formulário de pesquisa foi enviado
 if (isset($_GET['pesquisa'])) {
@@ -27,13 +20,6 @@ if (isset($_GET['pesquisa'])) {
 ?>
 
 <div class="container mt-5">
-    <?php if ($isAdmin) { ?>
-        <div class="row">
-            <div class="col mb-2">
-                <a href="atividades_form.php" class="btn btn-primary">Adicionar Atividade</a>
-            </div>
-        </div>
-    <?php } ?>
     <div class="row">
         <?php if (isset($_GET['sucesso'])) { ?>
             <p class="alert alert-success">
@@ -50,45 +36,47 @@ if (isset($_GET['pesquisa'])) {
             </form>
 
             <table class="table table-striped table-responsive-md">
-    <thead>
-        <tr>
-            <th scope="col">Nome</th>
-            <th scope="col">Descrição</th>
-            <th scope="col">Preço</th>
-            <th scope="col">Data</th>
-            <th scope="col">Localização</th>
-            <th></th>
-            <th></th>
-            <th></th> <!-- Nova coluna para o botão "Info" -->
-        </tr>
-    </thead>
-    <tbody>
-        <?php foreach ($resultados as $resultado) { ?>
-            <tr>
-                <td><?php echo $resultado->getNome(); ?></td>
-                <td><?php echo $resultado->getDescricao(); ?></td>
-                <td><?php echo $resultado->getPreco(); ?>€</td>
-                <td><?php echo $resultado->getData(); ?></td>
-                <td><?php echo $resultado->getLocalizacao(); ?></td>
-                <td class="text-end">
-                    <a href="reservar_atividade.php?id=<?php echo $resultado->getId() ?>" class="btn btn-primary btn-sm">
-                        <i class="fas fa-book fa-fw"></i> Reservar
-                    </a>
-                </td>
-                <td class="text-end">
-                    <a href="eliminar_atividade.php?id=<?php echo $resultado->getId() ?>" class="btn btn-danger btn-sm">
-                        <i class="fas fa-trash fa-fw"></i> Eliminar
-                    </a>
-                </td>
-                <td class="text-end">
-                    <a href="detalhes_atividades.php?id=<?php echo $resultado->getId() ?>" class="btn btn-info btn-sm">
-                        <i class="fas fa-info-circle fa-fw"></i> 
-                    </a>
-                </td>
-            </tr>
-        <?php } ?>
-    </tbody>
-</table>
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Descrição</th>
+                        <th scope="col">Preço</th>
+                        <th scope="col">Data</th>
+                        <th scope="col">Localização</th>
+                        <th></th>
+                        <th></th>
+                        <th></th> <!-- Nova coluna para o botão "Info" -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($resultados as $resultado) { ?>
+                        <tr>
+                            <td><?php echo $resultado->getNome(); ?></td>
+                            <td><?php echo $resultado->getDescricao(); ?></td>
+                            <td><?php echo $resultado->getPreco(); ?>€</td>
+                            <td><?php echo $resultado->getData(); ?></td>
+                            <td><?php echo $resultado->getLocalizacao(); ?></td>
+                            <td class="text-end">
+                                <a href="reservar_atividade.php?id=<?php echo $resultado->getId() ?>" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-book fa-fw"></i> Reservar
+                                </a>
+                            </td>
+                            <?php if (isset($_SESSION['perfil']) && $_SESSION['perfil'] === 'VENDEDOR') { ?>
+                                <td class="text-end">
+                                    <a href="eliminar_atividade.php?id=<?php echo $resultado->getId() ?>" class="btn btn-danger btn-sm">
+                                        <i class="fas fa-trash fa-fw"></i> Eliminar
+                                    </a>
+                                </td>
+                            <?php } ?>
+                            <td class="text-end">
+                                <a href="detalhes_atividades.php?id=<?php echo $resultado->getId() ?>" class="btn btn-info btn-sm">
+                                    <i class="fas fa-info-circle fa-fw"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

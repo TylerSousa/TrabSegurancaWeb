@@ -10,17 +10,17 @@ if (isset($_GET['id'])) {
     if ($atividade) {
         // Chame o método delete para excluir a atividade
         if ($atividade->delete()) {
-            header("Location: atividades.php?sucesso=Atividade eliminada com sucesso");
+            header("Location: minhas_atividades.php?sucesso=Atividade eliminada com sucesso");
             exit();
         } else {
-            header("Location: atividades.php?erro=Falha na exclusão da atividade");
+            header("Location: minhas_atividades.php?erro=Falha na exclusão da atividade");
             exit();
         }
     } else {
-        header("Location: atividades.php?erro=Atividade não encontrada");
+        header("Location: minhas_atividades.php?erro=Atividade não encontrada");
         exit();
     }
 } else {
-    header("Location: atividades.php?erro=ID da atividade não especificado");
+    header("Location: minhas_atividades.php?erro=ID da atividade não especificado");
     exit();
 }

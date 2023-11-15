@@ -18,40 +18,43 @@ abstract class Model
     }
 
     public function save()
-    {
-        $properties = get_class_vars(get_class($this));
+{
+    $properties = get_class_vars(get_class($this));
 
-        $campos = [];
-        foreach ($properties as $propertie => $value) {
-            if (in_array($propertie, ['connection', 'tableName', 'primaryKey','excludedProperties', 'id'])) {
-                continue;
-            }
-
-            if (in_array($propertie, $this->excludedProperties)) {
-                continue;
-            }
-
-            $campos[] = $propertie;
+    $campos = [];
+    $valores = [];
+    
+    foreach ($properties as $propertie => $value) {
+        if (in_array($propertie, ['connection', 'tableName', 'primaryKey', 'excludedProperties', 'id'])) {
+            continue;
         }
 
-
-
-        $sql = "insert into " . $this->tableName . ' ('
-            . implode(",", $campos) . ') values (';
-        
-        foreach ($campos as $pos => $campo) {
-            $sql .= "'" . $this->{$campo}
-                . "'"
-                . ($pos < count($campos)-1 ? ',' : '');
+        if (in_array($propertie, $this->excludedProperties)) {
+            continue;
         }
 
-        $sql .= ")";
-
-        $this->connection->query($sql);
-        $id = $this->connection->insert_id;
-
-        $this->id = $id;
+        $campos[] = $propertie;
+        $valores[] = $this->{$propertie};
     }
+
+    $placeholders = array_fill(0, count($valores), '?');
+    
+    $sql = "INSERT INTO " . $this->tableName . ' (' . implode(",", $campos) . ') VALUES (' . implode(",", $placeholders) . ')';
+    
+    $stmt = $this->connection->prepare($sql);
+
+    // Ajuste para lidar com diferentes tipos de dados
+    $types = str_repeat('s', count($valores));  // 's' para string; ajuste conforme necessário
+
+    $stmt->bind_param($types, ...$valores);
+    
+    $stmt->execute();
+    
+    $id = $stmt->insert_id;
+
+    $this->id = $id;
+}
+
 
     public static function find($id)
 {

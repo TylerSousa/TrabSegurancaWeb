@@ -2,7 +2,11 @@
 include 'includes/top.php';
 require_once '../autoloadclass.php';
 
-// ...
+// Verifique se o vendedor está autenticado
+if (!isset($_SESSION['vendedor_id']) || !is_numeric($_SESSION['vendedor_id'])) {
+    header('Location: login.php'); // Redirecione para a página de login se não estiver autenticado
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nome = $_POST['nome'];
@@ -11,19 +15,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $_POST['data'];
     $localizacao = $_POST['localizacao'];
 
-    // Valide os campos, execute a lógica para criar atividades e redirecione conforme necessário
+    // Obtenha o vendedor_id da sessão
+    $vendedor_id = $_SESSION['vendedor_id'];
 
     // Crie uma nova instância de MyConnect para obter uma conexão com o banco de dados
     $db = MyConnect::getInstance();
 
-    // Execute a inserção de dados na tabela 'atividades'
-    $query = "INSERT INTO atividades (nome, descricao, preco, data, localizacao) VALUES (?, ?, ?, ?, ?)";
+    // Execute a inserção de dados na tabela 'atividades' incluindo o vendedor_id
+    $query = "INSERT INTO atividades (nome, descricao, preco, data, localizacao, vendedor_id) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $db->prepare($query);
-    $stmt->bind_param("ssdss", $nome, $descricao, $preco, $data, $localizacao);
+    $stmt->bind_param("ssdssi", $nome, $descricao, $preco, $data, $localizacao, $vendedor_id);
 
     if ($stmt->execute()) {
         // Inserção bem-sucedida, redirecione para uma página de sucesso ou outra página
-        header("Location: atividades.php?sucesso=Atividade criada com sucesso");
+        header("Location: minhas_atividades.php?sucesso=Atividade criada com sucesso");
         exit();
     } else {
         // Erro ao inserir a atividade, redirecione para uma página de erro
@@ -31,9 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
     }
 }
-
-// Restante do código...
-
 
 ?>
 
