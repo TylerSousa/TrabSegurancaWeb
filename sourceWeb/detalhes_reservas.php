@@ -60,24 +60,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p><strong>Localização:</strong> <?php echo $atividade->getLocalizacao(); ?></p>
 
         <!-- Adicione mais informações conforme necessário -->
+        <p><strong>Status Atividade:</strong> <?php echo $atividade->getEstado(); ?></p> <!-- Exibe o estado da atividade -->
 
-        <h2>Detalhes da Reserva</h2>
-        <p><strong>Status:</strong> <?php echo $reserva->getStatus(); ?></p>
-        
-        <!-- Adicionar Comentário -->
+        <?php if ($atividade->getEstado() === 'realizada') { ?>
         <h2>Adicionar Comentário</h2>
         <form method="post">
             <textarea name="comentario" rows="4" cols="50"></textarea>
             <br>
             <button type="submit">Adicionar Comentário</button>
+            <!-- Exibição do comentário do cliente -->
+    <h2>Comentário do Cliente</h2>
+    <p><?php echo $reserva->getComentarioCliente(); ?></p>
+
+    <!-- Adicione mais informações da reserva conforme necessário -->
         </form>
-        
-        <!-- <h2>Comentário do Cliente</h2> -->
-        <p><?php echo $reserva->getComentarioCliente(); ?></p>
+    <?php } else { ?>
+        <p>O comentário só pode ser adicionado quando a atividade estiver Realizada.</p>
+    <?php } ?>
 
-        <!-- Adicione mais informações da reserva conforme necessário -->
-
-    </div>
+</div>
 
     <?php include 'includes/footer.php'; ?>
 </body>

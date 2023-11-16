@@ -39,36 +39,37 @@ $reservas = Reserva::search(['cliente_id' => $cliente_id]);
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($reservas as $reserva) : ?>
-                    <?php
-                    // Obtenha o ID do cliente associado à reserva
-                    $cliente_id_reserva = $reserva->getCliente_id();
+            <?php foreach ($reservas as $reserva) : ?>
+    <?php
+    // Obtenha o ID do cliente associado à reserva
+    $cliente_id_reserva = $reserva->getCliente_id();
 
-                    // Verifique se o cliente autenticado é o mesmo que fez a reserva
-                    if ($cliente_id !== $cliente_id_reserva) {
-                        // Se não for o mesmo cliente, ignore esta reserva
-                        continue;
-                    }
-                    ?>
-                    <tr>
-                        <td>
-                            <?php
-                            $atividade = Atividade::find($reserva->getAtividade_id());
-                            if ($atividade && $atividade->getId()) {
-                                echo $atividade->getNome();
-                            } else {
-                                // Se a atividade não existe, exclua a reserva diretamente
-                                Reserva::deleteById($reserva->getId());
-                                continue;
-                            }
-                            ?>
-                        </td>
-                        <td><?php echo $reserva->getStatus(); ?></td>
-                        <td>
-                            <a href="detalhes_reservas.php?id=<?php echo $reserva->getId(); ?>"><i class="fas fa-info-circle"></i></a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
+    // Verifique se o cliente autenticado é o mesmo que fez a reserva
+    if ($cliente_id !== $cliente_id_reserva) {
+        // Se não for o mesmo cliente, ignore esta reserva
+        continue;
+    }
+    ?>
+    <tr>
+        <td>
+            <?php
+            $atividade = Atividade::find($reserva->getAtividade_id());
+            if ($atividade && $atividade->getId()) {
+                echo $atividade->getNome();
+            } else {
+                // Se a atividade não existe, exclua a reserva diretamente
+                Reserva::deleteById($reserva->getId());
+                continue;
+            }
+            ?>
+        </td>
+        <td><?php echo $atividade->getEstado(); ?></td> <!-- Exibe o estado da atividade -->
+        <td>
+            <a href="detalhes_reservas.php?id=<?php echo $reserva->getId(); ?>"><i class="btn btn-info btn-sm">
+            <i class="fas fa-info-circle fa-fw"></i>
+        </td>
+    </tr>
+<?php endforeach; ?>
             </tbody>
         </table>
     <?php endif; ?>

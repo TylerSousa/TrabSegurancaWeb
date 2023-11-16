@@ -8,7 +8,7 @@ class Atividade extends Model
     protected ?string $data;
     protected ?string $localizacao;
     protected ?int $vendedor_id;
-    protected ?string $estado = null;
+    protected ?string $status = 'confirmado';
     
     public function __construct(string $nome = '', string $descricao = '', float $preco = 0.0, string $data = '', string $localizacao = '')
     {
@@ -24,25 +24,25 @@ class Atividade extends Model
         }
 
       /**
-     * Set the value of estado
+     * Set the value of status
      *
-     * @param string $estado
+     * @param string $status
      * @return self
      */
-    public function setEstado($estado)
+    public function setEstado($status)
     {
-        $this->estado = $estado;
+        $this->status = $status;
         return $this;
     }
 
     /**
-     * Get the value of estado
+     * Get the value of status
      *
      * @return string|null
      */
     public function getEstado()
     {
-        return $this->estado;
+        return $this->status;
     }
     /**
      * Get the value of vendedor_id
@@ -247,7 +247,8 @@ public function update()
                     descricao = ?,
                     preco = ?,
                     data = ?,
-                    localizacao = ?
+                    localizacao = ?,
+                    status = ?  -- Adicione a atualização do status
                 WHERE id = ?";
         $params = [
             $this->nome,
@@ -255,12 +256,13 @@ public function update()
             $this->preco,
             $this->data,
             $this->localizacao,
+            $this->status, // Atualização do status
             $this->id
         ];
         $stmt = $this->db->prepare($sql);
 
-        // "ssdssi" representa os tipos dos parâmetros: string, string, double, string, string, int
-        $stmt->bind_param("ssdssi", ...$params);
+        // "ssdsssi" representa os tipos dos parâmetros: string, string, double, string, string, string, int
+        $stmt->bind_param("ssdsssi", ...$params);
         $stmt->execute();
 
         return true; // Retorne true para indicar sucesso na atualização
@@ -268,6 +270,7 @@ public function update()
 
     return false; // Retorne false se não houver ID válido para a atividade
 }
+
 
 public static function find($id)
 {

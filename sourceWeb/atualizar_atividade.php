@@ -18,6 +18,8 @@ $atividade = Atividade::find($atividade_id);
 $erro = '';
 $sucesso = '';
 
+$conexao = MyConnect::getInstance();
+
 // Processa o formulário de atualização
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $novoNome = $_POST['novo_nome'];
@@ -31,17 +33,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erro = 'Todos os campos são obrigatórios.';
     } else {
         // Atualiza os dados da atividade
-        $atividade->setNome($novoNome);
-        $atividade->setDescricao($novaDescricao);
-        $atividade->setPreco($novoPreco);
-        $atividade->setData($novaData);
-        $atividade->setLocalizacao($novaLocalizacao);
+        $query = "UPDATE atividades SET nome=?, descricao=?, preco=?, data=?, localizacao=? WHERE id=?";
+        
+        // Prepara a declaração
+        $stmt = $conexao->prepare($query);
+        
+        // Associa os parâmetros
+        $stmt->bind_param("ssdssi", $novoNome, $novaDescricao, $novoPreco, $novaData, $novaLocalizacao, $atividade_id);
+        
+        // Executa a declaração
+        $stmt->execute();
 
-        // Salva as alterações no banco de dados
-        $atividade->save();
-
-        // Define a mensagem de sucesso
-        $sucesso = 'Atividade atualizada com sucesso!';
+        // Verifica se a atualização foi bem-sucedida
+        if ($stmt->affected_rows > 0) {
+            // Define a mensagem de sucesso
+            $sucesso = 'Atividade atualizada com sucesso!';
+        } else {
+            $erro = 'Falha ao atualizar a atividade.';
+        }
     }
 }
 ?>
@@ -60,28 +69,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <?php if ($atividade) { ?>
             <form method="post">
-                <div class="mb-3">
-                    <label for="novo_nome" class="form-label">Novo Nome:</label>
-                    <input type="text" class="form-control" id="novo_nome" name="novo_nome" value="<?php echo $atividade->getNome(); ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label for="nova_descricao" class="form-label">Nova Descrição:</label>
-                    <textarea class="form-control" id="nova_descricao" name="nova_descricao" required><?php echo $atividade->getDescricao(); ?></textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="novo_preco" class="form-label">Novo Preço:</label>
-                    <input type="text" class="form-control" id="novo_preco" name="novo_preco" value="<?php echo $atividade->getPreco(); ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label for="nova_data" class="form-label">Nova Data:</label>
-                    <input type="text" class="form-control" id="nova_data" name="nova_data" value="<?php echo $atividade->getData(); ?>" required>
-                </div>
-                <div class="mb-3">
-                    <label for="nova_localizacao" class="form-label">Nova Localização:</label>
-                    <input type="text" class="form-control" id="nova_localizacao" name="nova_localizacao" value="<?php echo $atividade->getLocalizacao(); ?>" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Atualizar</button>
-            </form>
+    <div class="mb-3">
+        <label for="novo_nome" class="form-label">Novo Nome:</label>
+        <input type="text" class="form-control" id="novo_nome" name="novo_nome" value="<?php echo $atividade->getNome(); ?>" required>
+    </div>
+    <div class="mb-3">
+        <label for="nova_descricao" class="form-label">Nova Descrição:</label>
+        <textarea class="form-control" id="nova_descricao" name="nova_descricao" required><?php echo $atividade->getDescricao(); ?></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="novo_preco" class="form-label">Novo Preço:</label>
+        <input type="text" class="form-control" id="novo_preco" name="novo_preco" value="<?php echo $atividade->getPreco(); ?>" pattern="[0-9]*" required>
+        <div class="invalid-feedback">Por favor, insira apenas números.</div>
+    </div>
+    <div class="mb-3">
+        <label for="nova_data" class="form-label">Nova Data:</label>
+        <input type="date" name="nova_data" class="form-control" required>
+    </div>
+    <div class="mb-3">
+        <label for="nova_localizacao" class="form-label">Nova Localização:</label>
+        <input type="text" class="form-control" id="nova_localizacao" name="nova_localizacao" value="<?php echo $atividade->getLocalizacao(); ?>" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Atualizar</button>
+</form>
+
 
 <!-- Exibe mensagens de erro ou sucesso -->
 <?php if ($erro) { ?>

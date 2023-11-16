@@ -258,8 +258,27 @@ public static function deleteById($id)
     $stmt->execute();
 }
 
+public static function findReservaPorAtividade($atividade_id)
+{
+    $classname = get_called_class();
+    $object = new $classname();
 
-    
-    
+    $sql = "SELECT * FROM " . $object->tableName . " WHERE atividade_id = ?";
+    $stmt = $object->connection->prepare($sql);
+    $stmt->bind_param('i', $atividade_id);
+    $stmt->execute();
 
+    $result = $stmt->get_result();
+    $reservas = [];
+
+    while ($row = $result->fetch_assoc()) {
+        $reserva = new Reserva();
+        foreach ($row as $key => $value) {
+            $reserva->$key = $value;
+        }
+        $reservas[] = $reserva;
+    }
+
+    return $reservas;
+}
 }

@@ -43,6 +43,7 @@ if (isset($_GET['pesquisa'])) {
                         <th scope="col">Preço</th>
                         <th scope="col">Data</th>
                         <th scope="col">Localização</th>
+                        <th scope="col">Status</th>
                         <th></th>
                         <th></th>
                         <th></th> <!-- Nova coluna para o botão "Info" -->
@@ -56,6 +57,7 @@ if (isset($_GET['pesquisa'])) {
                             <td><?php echo $resultado->getPreco(); ?>€</td>
                             <td><?php echo $resultado->getData(); ?></td>
                             <td><?php echo $resultado->getLocalizacao(); ?></td>
+                            <td><?php echo $resultado->getEstado(); ?></td>
                             <td class="text-end">
                                 <a href="reservar_atividade.php?id=<?php echo $resultado->getId() ?>" class="btn btn-primary btn-sm">
                                     <i class="fas fa-book fa-fw"></i> Reservar
